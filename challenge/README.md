@@ -38,7 +38,8 @@ All processing is done **in‑memory**. The pipeline produces:
 
 - **Language:** Python 3.12+
 - **Processing:** [Polars](https://pola.rs/) (zero‑copy, lazy by default)
-- **Architecture:** Abstract pipeline (`ABC`) with `extract` / `transform` / `validate` / `run`
+- **Layers:** `raw` → `clean` → `marts`, each with focused, single-responsibility modules
+- **Facade pattern:** `Pipeline` class orchestrates the full ETL lifecycle
 
 ## Project structure
 
@@ -46,21 +47,28 @@ All processing is done **in‑memory**. The pipeline produces:
 challenge/
 ├── README.md
 ├── requirements.txt
-├── data/
-│   └── raw/          ← Original CSVs (do not modify)
-└── src/
-    ├── __init__.py
-    ├── main.py              ← Orchestrator
-    ├── utils/
-    │   └── __init__.py      ← SchemaValidator, DataCleaner
-    ├── pipelines/
-    │   ├── base.py          ← ABC Pipeline
-    │   ├── lead.py          ← Lead processing
-    │   ├── call.py          ← Call processing
-    │   ├── person.py        ← Person enrichment
-    │   └── user.py          ← Agent enrichment
-    └── metrics/
-        └── business_metrics.py  ← KPI calculations
+src/
+│
+├── raw/                      # EXTRACT
+│   ├── loader.py             # CSV loading with Polars
+│   ├── schema.py             # Expected columns per table
+│   └── validator.py          # Schema & quality validation
+│
+├── clean/                    # TRANSFORM
+│   ├── leads.py              # Lead cleaning & enrichment
+│   ├── calls.py              # Call cleaning & enrichment
+│   ├── persons.py            # Person transformations
+│   └── users.py              # User transformations
+│
+├── marts/                    # LOAD (Data Marts)
+│   ├── daily_metrics.py      # Daily lead aggregation
+│   ├── agent_metrics.py      # Agent call performance
+│   ├── conversion_metrics.py # Global conversion summary
+│   └── executive_report.py   # Executive KPI report
+│
+├── pipeline.py               # Facade: Pipeline class + Result dataclass
+├── utils.py                  # Shared utilities (clean)
+└── main.py                   # Entry point
 ```
 
 ## How to run
@@ -77,5 +85,5 @@ python3 -m src.main
 
 - **Self‑documenting code**: expressive names + brief docstrings.
 - **Immutability**: Polars avoids unnecessary copies; chained transformations.
-- **Decoupling**: each pipeline manages its own schema and validation.
-- **Fault tolerance**: structured logging, errors isolated per pipeline.
+- **Decoupling**: each layer manages its own schema and validation.
+- **Fault tolerance**: structured logging, errors isolated per layer.

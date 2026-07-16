@@ -4,11 +4,11 @@ Main repository for the Nebula data team.
 
 ## Contents
 
+## Part 1
+
 - **[challenge/](challenge/)** – Data Engineer technical challenge.
   - Sample data, Polars ETL pipelines, and business metrics.
   - See `challenge/README.md` for full details.
 
-## Requirements
+## Part 2
 
-- Python 3.12+
-- [Polars](https://pola.rs/) (`pip install -r challenge/requirements.txt`)
