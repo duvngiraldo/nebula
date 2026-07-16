@@ -45,6 +45,7 @@ All processing is done **in‑memory**. The pipeline produces:
 ```
 challenge/
 ├── README.md
+├── requirements.txt
 ├── data/
 │   └── raw/          ← Original CSVs (do not modify)
 └── src/
@@ -65,12 +66,10 @@ challenge/
 ## How to run
 
 ```bash
-# From the repository root
 python3 -m venv .venv
 source .venv/bin/activate
-pip install polars
+pip install -r challenge/requirements.txt
 
-# From challenge/
 python3 -m src.main
 ```
 

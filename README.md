@@ -11,4 +11,4 @@ Main repository for the Nebula data team.
 ## Requirements
 
 - Python 3.12+
-- [Polars](https://pola.rs/) (`pip install polars`)
+- [Polars](https://pola.rs/) (`pip install -r challenge/requirements.txt`)
