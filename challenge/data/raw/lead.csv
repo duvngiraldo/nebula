@@ -1,0 +1,62 @@
+id,id_persona,id_usuario,estado,estado_contrato,formulario_de_origen,origen_lead,lead_type,importe_contrato,fecha_de_creacion,fecha_de_cierre,is_soft_delete,visible_tabla
+1000,2003,302,Nuevo,,bot seguros,bot,Otro,,2026-03-03 16:00:00,,False,True
+1001,2007,301,,,bot telefonia,bot,Otro,,2026-03-08 09:00:00,,False,True
+1002,2018,303,Reintentar contacto,,call_center,,Salud,,2026-03-11 08:00:00,,False,True
+1003,2004,303,Nuevo,,call_center,,Coche,,2026-03-06 14:00:00,,False,True
+1004,2020,301,Perdido,,bot seguros,bot,Luz,,2026-03-11 17:00:00,,False,True
+1005,2021,303,Perdido,,bot energia,bot,Salud,,2026-03-05 15:00:00,,False,False
+1006,2025,301,En gestión,,seguros,,Hogar,,2026-03-06 11:00:00,,False,True
+1007,2019,301,Nuevo,,seguros,,Coche,,2026-03-09 12:00:00,,False,True
+1008,2021,301,Nuevo,,bot telefonia,bot,Otro,,2026-03-08 08:00:00,,False,True
+1009,2002,301,Contratado,Contratada,bot energia,bot,Luz,531.87,2026-03-09 17:00:00,2026-03-13 17:00:00,False,True
+1010,2022,302,Nuevo,,bot energia,bot,Luz,,2026-03-09 12:00:00,,False,True
+1011,2006,302,En gestión,,bot seguros,bot,Hogar,,2026-03-09 08:00:00,,False,True
+1012,2014,302,En gestión,,bot telefonia,bot,Otro,,2026-03-03 10:00:00,,False,True
+1013,2011,303,Nuevo,,bot energia,bot,Salud,,2026-03-06 14:00:00,,False,False
+1014,2015,303,Nuevo,,call_center,,Hogar,,2026-03-05 08:00:00,,False,True
+1015,2010,301,Nuevo,,seguros,,Otro,,2026-03-11 17:00:00,,False,False
+1016,2012,302,Perdido,,bot telefonia,bot,Salud,,2026-03-10 14:00:00,,False,True
+1017,2005,301,Perdido,,bot seguros,bot,Luz,,2026-03-05 15:00:00,,False,True
+1018,2019,301,Nuevo,,bot energia,bot,Coche,,2026-03-03 13:00:00,,False,False
+1019,2011,302,Perdido,,seguros,,Coche,,2026-03-07 17:00:00,,False,True
+1020,2002,301,En gestión,,bot telefonia,bot,Coche,,2026-03-09 12:00:00,,False,True
+1021,2006,303,Perdido,,call_center,,Luz,,2026-03-10 08:00:00,,False,True
+1022,2027,301,,,bot energia,bot,Luz,,2026-03-06 18:00:00,,False,True
+1023,2007,303,Contratado,Contratada,bot energia,bot,Hogar,764.26,2026-03-10 13:00:00,2026-03-16 13:00:00,False,False
+1024,2023,301,Perdido,,bot energia,bot,Coche,,2026-03-09 13:00:00,,False,False
+1025,2025,303,En gestión,,bot energia,bot,Luz,,2026-03-07 15:00:00,,False,False
+1026,2010,301,En gestión,,call_center,,Salud,,2026-03-09 11:00:00,,False,True
+1027,2029,302,Contratado,Contratada,seguros,,Hogar,534.62,2026-03-03 18:00:00,2026-03-04 18:00:00,False,True
+1028,2023,301,Reintentar contacto,,bot telefonia,bot,Hogar,,2026-03-09 14:00:00,,False,True
+1029,2026,303,Nuevo,,bot telefonia,bot,Salud,,2026-03-04 17:00:00,,False,True
+1030,2025,303,En gestión,,call_center,,Coche,,2026-03-02 08:00:00,,False,True
+1031,2009,303,Contratado,Contratada,call_center,,Hogar,734.58,2026-03-02 12:00:00,2026-03-04 12:00:00,False,True
+1032,2021,303,Perdido,,bot seguros,bot,Otro,,2026-03-07 15:00:00,,False,True
+1033,2024,301,Contratado,Contratada,bot energia,bot,Otro,202.75,2026-03-10 08:00:00,2026-03-14 08:00:00,False,False
+1034,2010,303,Nuevo,,bot seguros,bot,Otro,,2026-03-10 08:00:00,,False,True
+1035,2006,302,En gestión,,bot energia,bot,Coche,,2026-03-02 11:00:00,,False,False
+1036,2019,303,Perdido,,bot seguros,bot,Otro,,2026-03-09 13:00:00,,False,True
+1037,2007,303,Perdido,,bot energia,bot,Otro,,2026-03-09 16:00:00,,False,False
+1038,2003,302,contratado,Contratada,call_center,,Salud,421.19,2026-03-09 10:00:00,2026-03-13 10:00:00,False,True
+1039,2022,303,En gestión,,seguros,,Luz,,2026-03-03 10:00:00,,False,True
+1040,2021,301,Contratado,Contratada,bot seguros,bot,Hogar,694.43,2026-03-08 15:00:00,2026-03-10 15:00:00,False,False
+1041,2023,302,En gestión,,seguros,,Coche,,2026-03-07 09:00:00,,False,True
+1042,2019,302,En gestión,,bot telefonia,bot,Otro,,2026-03-07 16:00:00,,False,False
+1043,2008,302,Nuevo,,call_center,,Coche,,2026-03-03 09:00:00,,False,False
+1044,2004,303,Nuevo,,bot telefonia,bot,Otro,,2026-03-06 14:00:00,,False,True
+1045,2028,301,Perdido,,bot seguros,bot,Luz,,2026-03-04 14:00:00,,False,False
+1046,2002,302,Perdido,,bot seguros,bot,Coche,,2026-03-11 11:00:00,,False,True
+1047,2001,303,Nuevo,,seguros,,Hogar,,2026-03-11 10:00:00,,False,False
+1048,2009,302,contratado,Contratada,seguros,,Otro,670.51,2026-03-06 16:00:00,2026-03-08 16:00:00,False,True
+1049,2023,303,Reintentar contacto,,bot seguros,bot,Otro,,2026-03-02 08:00:00,,False,False
+1050,2017,302,Contratado,Contratada,bot seguros,bot,Otro,415.45,2026-03-08 18:00:00,2026-03-12 18:00:00,True,True
+1051,2001,301,En gestión,,call_center,,Coche,,2026-03-08 13:00:00,,True,True
+1052,2026,302,Perdido,,bot seguros,bot,Otro,,2026-03-03 18:00:00,,True,True
+1053,2005,301,Perdido,,seguros,,Luz,,2026-03-02 15:00:00,,True,True
+1054,2007,301,Perdido,,seguros,,Luz,,2026-03-10 13:00:00,,True,True
+1055,2008,303,,,bot telefonia,bot,Hogar,,2026-03-03 15:00:00,,True,True
+1056,2001,302,contratado,Contratada,test,,Coche,409.75,2026-03-04 14:00:00,2026-03-09 14:00:00,False,True
+1057,2025,303,Contratado,Contratada,test,,Salud,735.02,2026-03-04 18:00:00,2026-03-10 18:00:00,False,True
+1058,2028,303,contratado,Contratada,demo,,Salud,713.7,2026-03-04 08:00:00,2026-03-10 08:00:00,False,False
+1059,2018,303,Contratado,Contratada,test,,Hogar,259.56,2026-03-11 08:00:00,2026-03-17 08:00:00,False,True
+1060,2020,301,Contratado,Contratada,prueba_qa,,Otro,676.46,2026-03-09 16:00:00,2026-03-10 16:00:00,False,True
