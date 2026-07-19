@@ -74,7 +74,7 @@ Se evaluó y descartó la inclusión de Apache Kafka en favor de **Kinesis Fireh
 * **Carga de Mantenimiento:** Delegar la administración de la ingesta en Kinesis Firehose elimina la carga operativa de gestionar brokers, particiones y zookeeper.
 * **Alineación con el Caso de Uso (Data Lake Analítico):** Kafka brilla en reactividad en milisegundos. Para un Data Lake de BI, una latencia de consolidación de 5 minutos (*near real-time*) es óptima. Introducir Kafka habría supuesto una sobreingeniería injustificada.
 
-**Organización del particionado estilo Hive en S3 (`capa raw`):**
+**Organización del particionado estilo Hive en S3 (`capa raw bucket`):**
 ```text
 raw/
 ├── postgres/              # Fuente Transaccional Estructurada (via AWS DMS CDC)
@@ -108,7 +108,7 @@ Se descartan los AWS Glue Spark Jobs continuos por su alto coste fijo. Se utiliz
     *   **Definición de Tabla:** Durante la fase IaC de DDL (`CREATE EXTERNAL TABLE`), se define explícitamente el parámetro `LOCATION` apuntando al prefijo de S3 Raw correspondiente. Athena consulta el Glue Catalog para saber dónde leer.
     *   **SQL MERGE:** El script SQL orquestado por la Lambda define el flujo: `MERGE INTO capa_clean.usuario TARGET USING capa_raw.usuario_updates SOURCE ...`. Athena traduce estos nombres de tabla a rutas físicas de S3 (Raw para leer, Clean para escribir via Iceberg) consultando el catálogo.
 
-**Organización del particionado Iceberg en S3 (`capa-clean-bucket`):**
+**Organización del particionado Iceberg en S3 (`capa clean bucket`):**
 ```text
 clean/
 ├── usuario/                      # Entidad unificada (Postgres + APIs)
@@ -134,7 +134,7 @@ Al igual que en la capa Clean, se implementa un enfoque **ELT Serverless** para 
 * **Procesamiento:** La Lambda invoca de manera asíncrona a **Amazon Athena** para ejecutar sentencias `INSERT INTO` masivas.
 * **Transformación:** En esta etapa se realizan los *Joins* definitivos entre las tablas de la capa *Clean*, se aplica la lógica de negocio, el cálculo de métricas, la generación de claves subrogadas y las reglas de dimensionalidad (como SCD Tipo 2).
 
-#### 📂 Estructura de Almacenamiento en S3 (`capa-marts-bucket`)
+#### 📂 Estructura de Almacenamiento en S3 (`capa marts bucket`)
 Los datos se organizan físicamente en subcarpetas separadas según su propósito dimensional para coincidir con el diagrama de arquitectura:
 
 ```text
@@ -301,7 +301,7 @@ Continuous AWS Glue Spark Jobs are discarded due to their high fixed cost. An op
     *   **Table Definition:** During the DDL IaC phase (`CREATE EXTERNAL TABLE`), the `LOCATION` parameter is explicitly defined pointing to the corresponding S3 Raw prefix. Athena queries the Glue Catalog to know where to read.
     *   **SQL MERGE:** The SQL script orchestrated by the Lambda defines the flow: `MERGE INTO capa_clean.usuario TARGET USING capa_raw.usuario_updates SOURCE ...`. Athena translates these table names into physical S3 paths (Raw to read, Clean to write via Iceberg) by querying the catalog.
 
-**Iceberg partitioning organization in S3 (`capa-clean-bucket`):**
+**Iceberg partitioning organization in S3 (`capa clean bucket`):**
 ```text
 clean/
 ├── usuario/                      # Unified entity (Postgres + APIs)
@@ -327,7 +327,7 @@ As in the Clean layer, a **Serverless ELT** approach is implemented to maintain 
 * **Processing:** The Lambda asynchronously invokes **Amazon Athena** to execute bulk `INSERT INTO` statements.
 * **Transformation:** In this stage, the final *Joins* between the tables of the *Clean* layer are performed, business logic is applied, metrics are calculated, surrogate keys are generated, and dimensionality rules (such as SCD Type 2) are enforced.
 
-#### 📂 Storage Structure in S3 (`capa-marts-bucket`)
+#### 📂 Storage Structure in S3 (`capa marts bucket`)
 Data is physically organized into separate subfolders according to their dimensional purpose to match the architecture diagram:
 
 ```text
