@@ -1,9 +1,4 @@
-# Nebula | Data Engineer Technical Challenge
-
-## Context
-
-You are a Data Engineer at Nebula, an insurtech expanding its sales channel.  
-The commercial team needs visibility into lead, call, and agent performance to make data-driven decisions.
+# Technical Challenge
 
 ## Raw data (CSV)
 
