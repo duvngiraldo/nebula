@@ -1,50 +1,75 @@
-from dataclasses import dataclass, field
-from typing import Any
+import time
 
 import polars as pl
 
-from src.raw import load_all
-from src.clean import clean_all
-from src.marts import (
-    compute_daily_metrics,
-    compute_agent_metrics,
-    compute_conversion_summary,
-    build_executive_report,
+from src.raw.reader import read_leads, read_calls, read_users
+from src.clean.cleaner import clean_leads, clean_calls
+from src.marts.metrics import (
+    leads_per_day,
+    conversion_rate,
+    effective_calls_per_day,
+    effective_calls_per_agent,
+    write_all,
 )
 
 
-@dataclass
-class Result:
-    daily: pl.DataFrame = field(default_factory=pl.DataFrame)
-    agents: pl.DataFrame = field(default_factory=pl.DataFrame)
-    summary: pl.DataFrame = field(default_factory=pl.DataFrame)
-    report: dict[str, Any] = field(default_factory=dict)
-
-    @property
-    def conversion_rate(self) -> float:
-        if self.summary.is_empty():
-            return 0.0
-        return (
-            self.summary.filter(pl.col("metric") == "Conversion Rate %")
-            .select("value").item()
-        )
-
-
 class Pipeline:
-    def extract(self) -> dict[str, pl.DataFrame]:
-        return load_all()
 
-    def transform(self, raw: dict[str, pl.DataFrame]) -> dict[str, pl.DataFrame]:
-        return clean_all(raw)
+    def run(self) -> None:
+        t0 = time.time()
+        self._print_header()
 
-    def load(self, clean: dict[str, pl.DataFrame]) -> Result:
-        daily = compute_daily_metrics(clean["leads"])
-        agents = compute_agent_metrics(clean["calls"])
-        summary = compute_conversion_summary(daily)
-        report = build_executive_report(daily, agents, summary)
-        return Result(daily=daily, agents=agents, summary=summary, report=report)
+        raw = self._phase_raw()
+        clean = self._phase_clean(raw)
+        self._phase_marts(clean)
 
-    def run(self) -> Result:
-        raw = self.extract()
-        clean = self.transform(raw)
-        return self.load(clean)
+        self._print_footer(t0)
+
+    # ── phases ──────────────────────────────────────────────
+
+    def _phase_raw(self) -> dict:
+        print("── raw ───────────────────────────────────────────────")
+        leads = read_leads()
+        calls = read_calls()
+        users = read_users()
+        print(f"  leads={leads.collect().height}, "
+              f"calls={calls.collect().height}, "
+              f"users={users.collect().height}")
+        return {"leads": leads, "calls": calls, "users": users}
+
+    def _phase_clean(self, raw: dict) -> dict:
+        print("\n── clean ──────────────────────────────────────────────")
+        leads = clean_leads(raw["leads"])
+        calls = clean_calls(raw["calls"])
+        n_leads = leads.select(pl.len()).collect().item()
+        n_calls = calls.select(pl.len()).collect().item()
+        print(f"  leads={n_leads}, calls={n_calls}")
+        return {"leads": leads, "calls": calls, "users": raw["users"]}
+
+    def _phase_marts(self, clean: dict) -> dict:
+        print("\n── marts ──────────────────────────────────────────────")
+        results = {
+            "leads_per_day": leads_per_day(clean["leads"]),
+            "conversion_rate": conversion_rate(clean["leads"]),
+            "effective_calls_per_day": effective_calls_per_day(clean["calls"]),
+            "effective_calls_per_agent": effective_calls_per_agent(
+                clean["calls"], clean["users"]
+            ),
+        }
+        write_all(results)
+        return results
+
+    # ── helpers ──────────────────────────────────────────────
+
+    @staticmethod
+    def _print_header() -> None:
+        print("=" * 48)
+        print("  Pipeline ETL")
+        print("=" * 48)
+
+    @staticmethod
+    def _print_footer(t0: float) -> None:
+        elapsed = time.time() - t0
+        print(f"\n{'=' * 48}")
+        print(f"  Pipeline completado en {elapsed:.2f}s")
+        print(f"{'=' * 48}")

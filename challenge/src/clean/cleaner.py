@@ -1,0 +1,24 @@
+import polars as pl
+
+
+def clean_leads(raw: pl.LazyFrame) -> pl.LazyFrame:
+    return (
+        raw
+        .filter(pl.col("is_soft_delete") == False)
+        .filter(pl.col("visible_tabla") == True)
+        .with_columns(
+            pl.col("fecha_de_creacion").dt.date().alias("fecha_creacion"),
+            pl.col("fecha_de_cierre").dt.date().alias("fecha_cierre"),
+            pl.col("estado").str.to_lowercase().alias("estado"),
+        )
+    )
+
+
+def clean_calls(raw: pl.LazyFrame) -> pl.LazyFrame:
+    return (
+        raw
+        .filter(pl.col("is_soft_delete") == False)
+        .with_columns(
+            pl.col("timestamp_connection").dt.date().alias("fecha_llamada"),
+        )
+    )
