@@ -2,6 +2,7 @@ import polars as pl
 
 
 def clean_leads(raw: pl.LazyFrame) -> pl.LazyFrame:
+    """Filter out soft-deleted and invisible leads, normalise timestamps to dates and estado to lowercase."""
     return (
         raw
         .filter(pl.col("is_soft_delete") == False)
@@ -15,6 +16,7 @@ def clean_leads(raw: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def clean_calls(raw: pl.LazyFrame) -> pl.LazyFrame:
+    """Remove soft-deleted calls, extract call date and compute duration in seconds."""
     return (
         raw
         .filter(pl.col("is_soft_delete") == False)
