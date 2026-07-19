@@ -8,7 +8,7 @@
   * [2. Ingesta (CDC)](#2-ingesta-cdc)
   * [3. Multi-fuente](#3-multi-fuente)
   * [4. Gobierno y confianza](#4-gobierno-y-confianza)
-* **[Parte 3: Comunicar](#part-3-comunicar)**
+* **[Parte 3: Comunicar](#parte-3-comunicar)**
 
 ---
 
@@ -20,11 +20,6 @@
     - Tasa de conversión
     - Llamadas efectivas por día
     - Llamadas efectivas por agente
----
-
-## Parte 3: Comunicar
-La tasa de conversión es la proporción de leads que resultaron en una venta: ventas / total leads. Del universo de 38 leads válidos, 9 tienen estado contratado, por lo que la tasa es 9/38 = 23.68%. Indica qué porcentaje de los leads generados efectivamente se convirtieron en clientes.
-Por lo tanto, el 23.68% de los clientes cerraron un trato con una persona.
 ---
 
 ## Part 2: Data Lake Architecture
@@ -196,6 +191,11 @@ FROM capa_clean.usuario
 FOR SYSTEM_TIME AS OF TIMESTAMP '2026-03-01 00:00:00 UTC';
 ```
 
+---
+
+## Parte 3: Comunicar
+La tasa de conversión es la proporción de leads que resultaron en una venta: ventas / total leads. Del universo de 38 leads válidos, 9 tienen estado contratado, por lo que la tasa es 9/38 = 23.68%. Indica qué porcentaje de los leads generados efectivamente se convirtieron en clientes.
+Por lo tanto, el 23.68% de los clientes cerraron un trato con una persona.
 ----
 # Nebula - Data Lake Architecture (english)
 
@@ -207,6 +207,7 @@ FOR SYSTEM_TIME AS OF TIMESTAMP '2026-03-01 00:00:00 UTC';
   * [2. Ingestion](#2-ingestion)
   * [3. Multi-source-solution](#3-multi-source-solution)
   * [4. Governance and trust](#4-governance-and-trust)
+* **[Part 3: Communicate](#part-3-communicate)**
 
 ---
 
@@ -387,3 +388,8 @@ SELECT *
 FROM capa_clean.usuario 
 FOR SYSTEM_TIME AS OF TIMESTAMP '2026-03-01 00:00:00 UTC';
 ```
+---
+
+## Part 3: Communicate
+The conversion rate is the proportion of leads that resulted in a sale: sales / total leads. Out of the universe of 38 valid leads, 9 have a "contracted" status, resulting in a rate of 9/38 = 23.68%. This indicates what percentage of the generated leads were effectively converted into customers.
+Therefore, 23.68% of the customers closed a deal with a person.
