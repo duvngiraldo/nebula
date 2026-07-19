@@ -1,4 +1,4 @@
-# Nebula - Data Lake Architecture
+# Nebula - Data Lake Architecture (spanish)
 
 ## 📂 Contents
 
@@ -191,20 +191,20 @@ FOR SYSTEM_TIME AS OF TIMESTAMP '2026-03-01 00:00:00 UTC';
 ```
 
 ----
-# Nebula - Data Lake Architecture
+# Nebula - Data Lake Architecture (english)
 
 ## 📂 Contents
 
-* **[Part 1: Technical Challenge](#🎯-part-1-technical-challenge)**
-* **[Part 2: Data Lake Architecture](#🏗️-part-2-data-lake-architecture)**
-  * [1. Infrastructure (IaC)](#1-infrastructure-iac)
-  * [2. Ingestion (CDC)](#2-ingestion-cdc)
-  * [3. Multi-source](#3-multi-source)
+* **[Part 1: Technical Challenge solution](#part-1-technical-challenge-solution)**
+* **[Part 2: Data Lake Architecture design](#part-2-data-lake-architecture-design)**
+  * [1. Infrastructure](#1-infrastructure)
+  * [2. Ingestion](#2-ingestion)
+  * [3. Multi-source-solution](#3-multi-source-solution)
   * [4. Governance and trust](#4-governance-and-trust)
 
 ---
 
-## 🎯 Part 1: Technical Challenge
+## Part 1: Technical Challenge solution
 
 * **[`challenge/`](challenge/)**
   * Python project using the **Polars** library to calculate aggregations:
@@ -214,12 +214,12 @@ FOR SYSTEM_TIME AS OF TIMESTAMP '2026-03-01 00:00:00 UTC';
     - Effective calls per agent
 ---
 
-## 🏗️ Part 2: Data Lake Architecture
+## Part 2: Data Lake Architecture design
 
 ### 🗺️ Architecture Diagram
 ![Infrastructure diagram](documentation/architecture-diagram.png)
 
-### 1. Infrastructure (IaC)
+### 1. Infrastructure
 
 This section details the AWS components required to deploy this architecture using **Infrastructure as Code (IaC)**, leveraging tools such as Terraform, AWS CloudFormation, or AWS CDK. Networking, security, orchestration, and monitoring services that do not appear explicitly in the architecture diagram but are indispensable for a production environment have been included.
 
@@ -241,7 +241,7 @@ This section details the AWS components required to deploy this architecture usi
 | **Monitoring & Logs** | **Amazon CloudWatch** | Centralizes metrics (latency, failures) and logs from DMS, Firehose, Lambda, and Athena. | IaC configures `LogGroups` and `Alarms` (e.g., alert if DMS has high lag). |
 | **Visualization** | **Amazon QuickSight** | BI tool for consuming the Marts Layer. | Paid per author/user session. The connection to Athena can be configured via IaC (CDK). |
 
-### 2. Ingestion (CDC)
+### 2. Ingestion
 
 ### 2.1. Ingestion Methodology
 
@@ -345,7 +345,7 @@ marts/
     └── facts_cloud_events/     # Extensensibility: New business metrics
 ```
 
-### 3. Multi-source
+### 3. Multi-source solution
 The Data Lake is designed by unifying the ingestion of relational databases and third-party webhooks.
 
 **If a new, different source arrives tomorrow (e.g., cloud provider events or batch files), how would you integrate it?**
