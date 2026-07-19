@@ -18,15 +18,13 @@ def leads_per_day(leads: pl.LazyFrame) -> pl.DataFrame:
 def conversion_rate(leads: pl.LazyFrame) -> pl.DataFrame:
     return (
         leads
-        .group_by("fecha_creacion")
-        .agg(
+        .select(
             pl.len().alias("total_leads"),
             pl.col("estado").str.to_lowercase().eq("contratado").sum().alias("ventas"),
         )
         .with_columns(
             (pl.col("ventas") / pl.col("total_leads")).alias("conversion_rate"),
         )
-        .sort("fecha_creacion")
         .collect()
     )
 
@@ -34,6 +32,7 @@ def conversion_rate(leads: pl.LazyFrame) -> pl.DataFrame:
 def effective_calls_per_day(calls: pl.LazyFrame) -> pl.DataFrame:
     return (
         calls
+        .filter(pl.col("duracion_segundos") > 5)
         .group_by("fecha_llamada")
         .agg(pl.len().alias("total_llamadas_efectivas"))
         .sort("fecha_llamada")
@@ -44,6 +43,7 @@ def effective_calls_per_day(calls: pl.LazyFrame) -> pl.DataFrame:
 def effective_calls_per_agent(calls: pl.LazyFrame, users: pl.LazyFrame) -> pl.DataFrame:
     return (
         calls
+        .filter(pl.col("duracion_segundos") > 5)
         .group_by("id_usuario")
         .agg(pl.len().alias("total_llamadas_efectivas"))
         .join(users, left_on="id_usuario", right_on="id", how="left")

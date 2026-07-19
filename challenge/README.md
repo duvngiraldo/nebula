@@ -1,31 +1,31 @@
-# Technical Challenge / Desafío Técnico
+# Desafío Técnico
 
-## Raw data / Datos crudos
+## Datos crudos
 
-| File / Archivo    | Records / Registros | Description / Descripción               |
-|--------------------|---------------------|------------------------------------------|
-| `lead.csv`         | 61                  | Leads with status, source, value / Leads con estado, origen, importe |
-| `llamada.csv`      | 80                  | Calls with timestamps and agent / Llamadas con timestamp y agente |
-| `persona.csv`      | 30                  | Persons / customers / Personas / clientes |
-| `usuario.csv`      | 3                   | Commercial agents / Agentes comerciales  |
+| Archivo          | Registros | Descripción                         |
+|------------------|-----------|-------------------------------------|
+| `lead.csv`       | 61        | Leads con estado, origen, importe   |
+| `llamada.csv`    | 80        | Llamadas con timestamp y agente     |
+| `persona.csv`    | 30        | Personas / clientes                 |
+| `usuario.csv`    | 3         | Agentes comerciales                 |
 
-Each lead references a person (`id_persona`) and a user/agent (`id_usuario`). / Cada lead referencia una persona y un usuario/agente.
+Cada lead referencia una persona (`id_persona`) y un usuario/agente (`id_usuario`).
 
-## Goal / Objetivo
+## Objetivo
 
-- Leads per day / Leads por día
-- Conversion rate (ventas / leads) / Tasa de conversión (ventas / leads)
-- Effective calls per day / Llamadas efectivas por día
-- Effective calls per agent / Llamadas efectivas por agente
+- Leads por día
+- Tasa de conversión (ventas / leads)
+- Llamadas efectivas por día
+- Llamadas efectivas por agente
 
-## Tech stack / Tecnología
+## Tecnología
 
-- **Language / Lenguaje:** Python 3.12+
-- **Processing / Procesamiento:** [Polars](https://pola.rs/) (zero‑copy, lazy by default)
-- **Layers / Capas:** `raw` → `clean` → `marts`, each with focused, single-responsibility modules / cada capa con módulos enfocados de una sola responsabilidad
-- **Facade pattern / Patrón facade:** `Pipeline` class orchestrates the full ETL lifecycle / la clase `Pipeline` orquesta todo el ciclo ETL
+- **Lenguaje:** Python 3.12+
+- **Procesamiento:** [Polars](https://pola.rs/) (zero‑copy, lazy por defecto)
+- **Capas:** `raw` → `clean` → `marts`, cada capa con módulos enfocados de una sola responsabilidad
+- **Patrón facade:** la clase `Pipeline` orquesta todo el ciclo ETL
 
-## How to run / Cómo ejecutar
+## Cómo ejecutar
 
 ```bash
 python3 -m venv .venv
@@ -35,42 +35,121 @@ pip install -r challenge/requirements.txt
 python3 -m src.main
 ```
 
-## Tests / Pruebas
+## Pruebas
 
 ```bash
 python3 -m pytest tests/ -v
 ```
 
-| Test class / Clase de prueba | Metric / Métrica | Cases / Casos |
+| Clase de prueba      | Métrica                          | Casos                                       |
+|----------------------|----------------------------------|---------------------------------------------|
+| `TestLeadsPerDay`    | leads por día                    | fechas, conteos, entrada vacía              |
+| `TestConversionRate` | tasa de conversión (global)      | valor único, 0%, 100%, conteo de ventas     |
+| `TestEffectiveCallsPerDay` | llamadas efectivas por día | fechas, conteos                             |
+| `TestEffectiveCallsPerAgent` | llamadas efectivas por agente | nombres, conteos, orden descendente |
+
+## Decisiones y supuestos
+
+### Qué se considera válido
+
+- **Leads**: solo registros con `is_soft_delete=False` y `visible_tabla=True`. Un lead es "venta" cuando su `estado` es `contratado` (sin distinción de mayúsculas — "Contratado" y "contratado" se normalizan a minúsculas).
+- **Llamadas**: solo registros con `is_soft_delete=False` y duración mayor a 5 segundos (`timestamp_call_end - timestamp_connection > 5s`).
+- **Tasa de conversión**: valor único global `ventas / total_leads`, no una serie por día.
+
+### Qué se descartó
+
+- **`persona.csv`**: no es necesario para ninguna de las 4 métricas solicitadas (no se especificó agregación a nivel de persona). Se detectó una anomalía: las personas 2005 y 2006 comparten el mismo teléfono (`+34600000005`), lo cual no afecta las métricas actuales pero sería relevante si se requiriera validación de contacto único.
+- **Registros con borrado lógico**: 2 llamadas (`id` 5042, 5066) y 6 leads con `is_soft_delete=True`. Además, leads con `visible_tabla=False` se excluyen por ser registros internos / de prueba que no deberían sesgar las métricas de negocio.
+
+### Por qué las cifras son confiables
+
+1. **Pipeline determinista**: la misma entrada siempre produce la misma salida — sin semillas aleatorias ni muestreo.
+2. **Conteos validados cruzadamente**: la suma de `effective_calls_per_day` coincide con el total de `effective_calls_per_agent` (77 llamadas). Los conteos de leads son reproduciblemente filtrados del CSV original.
+3. **Ejecución lazy con esquema forzado**: Polars valida tipos al escanear; la capa clean aplica filtros y casts explícitos antes de calcular cualquier métrica.
+4. **12 pruebas unitarias cubriendo las 4 métricas**: incluyendo casos límite (entrada vacía, conversión 0% / 100%, salida ordenada).
+
+## Principios de diseño
+
+- **Código autodocumentado**: nombres expresivos + docstrings breves.
+- **Inmutabilidad**: Polars evita copias innecesarias; transformaciones encadenadas.
+- **Desacoplamiento**: cada capa gestiona su propio esquema y validación.
+- **Tolerancia a fallos**: logging estructurado, errores aislados por capa.
+
+---
+
+# Technical Challenge
+
+## Raw data
+
+| File               | Records | Description                  |
+|--------------------|---------|------------------------------|
+| `lead.csv`         | 61      | Leads with status, source, value |
+| `llamada.csv`      | 80      | Calls with timestamps and agent  |
+| `persona.csv`      | 30      | Persons / customers              |
+| `usuario.csv`      | 3       | Commercial agents                |
+
+Each lead references a person (`id_persona`) and a user/agent (`id_usuario`).
+
+## Goal
+
+- Leads per day
+- Conversion rate (ventas / leads)
+- Effective calls per day
+- Effective calls per agent
+
+## Tech stack
+
+- **Language:** Python 3.12+
+- **Processing:** [Polars](https://pola.rs/) (zero‑copy, lazy by default)
+- **Layers:** `raw` → `clean` → `marts`, each with focused, single-responsibility modules
+- **Facade pattern:** `Pipeline` class orchestrates the full ETL lifecycle
+
+## How to run
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r challenge/requirements.txt
+
+python3 -m src.main
+```
+
+## Tests
+
+```bash
+python3 -m pytest tests/ -v
+```
+
+| Test class | Metric | Cases |
 |---|---|---|
-| `TestLeadsPerDay` | leads per day / leads por día | dates, counts, empty input / fechas, conteos, entrada vacía |
-| `TestConversionRate` | conversion rate / tasa de conversión | correct rate, 0%, 100%, ventas count / tasa correcta, 0%, 100%, conteo de ventas |
-| `TestEffectiveCallsPerDay` | effective calls per day / llamadas efectivas por día | dates, counts / fechas, conteos |
-| `TestEffectiveCallsPerAgent` | effective calls per agent / llamadas efectivas por agente | names, counts, descending order / nombres, conteos, orden descendente |
+| `TestLeadsPerDay` | leads per day | dates, counts, empty input |
+| `TestConversionRate` | conversion rate (global) | single value, 0%, 100%, ventas count |
+| `TestEffectiveCallsPerDay` | effective calls per day | dates, counts |
+| `TestEffectiveCallsPerAgent` | effective calls per agent | names, counts, descending order |
 
-## Decisions & assumptions / Decisiones y supuestos
+## Decisions & assumptions
 
-### What is considered valid / Qué se considera válido
+### What is considered valid
 
-- **Leads**: only records with `is_soft_delete=False` and `visible_tabla=True`. A lead is a "venta" when its `estado` is `contratado` (case-insensitive — "Contratado" and "contratado" are normalized to lowercase). / Solo registros sin borrado lógico y visibles. Un lead es "venta" cuando su estado es `contratado` (sin distinción de mayúsculas).
-- **Calls / Llamadas**: only records with `is_soft_delete=False`. All non-deleted calls are considered "effective" — every record has a non-null `id_call_connect`, so no additional duration filter was applied. / Solo registros sin borrado lógico. Todas las llamadas no eliminadas se consideran "efectivas" — todos los registros tienen `id_call_connect` no nulo, por lo que no se aplicó filtro adicional de duración.
-- **Conversion rate / Tasa de conversión**: computed per day as `ventas / total_leads` for that day, not a global rate. / Calculada por día como `ventas / total_leads` de ese día, no una tasa global.
+- **Leads**: only records with `is_soft_delete=False` and `visible_tabla=True`. A lead is a "venta" when its `estado` is `contratado` (case-insensitive — "Contratado" and "contratado" are normalized to lowercase).
+- **Calls**: only records with `is_soft_delete=False` and duration greater than 5 seconds (`timestamp_call_end - timestamp_connection > 5s`).
+- **Conversion rate**: single global value `ventas / total_leads`, not a daily series.
 
-### What was discarded / Qué se descartó
+### What was discarded
 
-- **`persona.csv`**: not needed for any of the 4 requested metrics (no persona-level aggregation was specified). / No es necesario para ninguna de las 4 métricas solicitadas (no se especificó agregación a nivel de persona).
-- **Soft-deleted records / Registros con borrado lógico**: 2 calls (`id` 5042, 5066) and 6 leads with `is_soft_delete=True`. Additionally, leads with `visible_tabla=False` are excluded — they represent internal/test records that shouldn't skew business metrics. / 2 llamadas y 6 leads con `is_soft_delete=True`; además, leads con `visible_tabla=False` se excluyen por ser registros internos/de prueba.
+- **`persona.csv`**: not needed for any of the 4 requested metrics (no persona-level aggregation was specified).
+- **Soft-deleted records**: 2 calls (`id` 5042, 5066) and 6 leads with `is_soft_delete=True`. Additionally, leads with `visible_tabla=False` are excluded — they represent internal/test records that shouldn't skew business metrics.
 
-### Why the figures are trustworthy / Por qué las cifras son confiables
+### Why the figures are trustworthy
 
-1. **Deterministic pipeline / Pipeline determinista**: same input always produces the same output — no random seeds, no sampling. / La misma entrada siempre produce la misma salida — sin semillas aleatorias ni muestreo.
-2. **Cross-validated counts / Conteos validados cruzadamente**: `effective_calls_per_day` sums match `effective_calls_per_agent` totals (77 calls). Lead counts are independently reproducible by filtering the raw CSV. / La suma de `effective_calls_per_day` coincide con el total de `effective_calls_per_agent` (77 llamadas). Los conteos de leads son reproduciblemente filtrados del CSV original.
-3. **Lazy execution with schema enforcement / Ejecución lazy con esquema forzado**: Polars validates types at scan time; the clean layer applies explicit filters and casts before any metric is computed. / Polars valida tipos al escanear; la capa clean aplica filtros y casts explícitos antes de calcular cualquier métrica.
-4. **12 unit tests covering all 4 metrics / 12 pruebas unitarias cubriendo las 4 métricas**: including edge cases (empty input, 0% / 100% conversion, sorted output). / Incluyendo casos límite (entrada vacía, conversión 0% / 100%, salida ordenada).
+1. **Deterministic pipeline**: same input always produces the same output — no random seeds, no sampling.
+2. **Cross-validated counts**: `effective_calls_per_day` sums match `effective_calls_per_agent` totals (77 calls). Lead counts are independently reproducible by filtering the raw CSV.
+3. **Lazy execution with schema enforcement**: Polars validates types at scan time; the clean layer applies explicit filters and casts before any metric is computed.
+4. **12 unit tests covering all 4 metrics**: including edge cases (empty input, 0% / 100% conversion, sorted output).
 
-## Design principles / Principios de diseño
+## Design principles
 
-- **Self‑documenting code / Código autodocumentado**: expressive names + brief docstrings. / Nombres expresivos + docstrings breves.
-- **Immutability / Inmutabilidad**: Polars avoids unnecessary copies; chained transformations. / Polars evita copias innecesarias; transformaciones encadenadas.
-- **Decoupling / Desacoplamiento**: each layer manages its own schema and validation. / Cada capa gestiona su propio esquema y validación.
-- **Fault tolerance / Tolerancia a fallos**: structured logging, errors isolated per layer. / Logging estructurado, errores aislados por capa.
+- **Self‑documenting code**: expressive names + brief docstrings.
+- **Immutability**: Polars avoids unnecessary copies; chained transformations.
+- **Decoupling**: each layer manages its own schema and validation.
+- **Fault tolerance**: structured logging, errors isolated per layer.

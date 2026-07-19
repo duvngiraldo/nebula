@@ -8,6 +8,7 @@
   * [2. Ingesta (CDC)](#2-ingesta-cdc)
   * [3. Multi-fuente](#3-multi-fuente)
   * [4. Gobierno y confianza](#4-gobierno-y-confianza)
+* **[Parte 3: Comunicar](#part-3-comunicar)**
 
 ---
 
@@ -19,6 +20,11 @@
     - Tasa de conversión
     - Llamadas efectivas por día
     - Llamadas efectivas por agente
+---
+
+## Parte 3: Comunicar
+La tasa de conversión es la proporción de leads que resultaron en una venta: ventas / total leads. Del universo de 38 leads válidos, 9 tienen estado contratado, por lo que la tasa es 9/38 = 23.68%. Indica qué porcentaje de los leads generados efectivamente se convirtieron en clientes.
+Por lo tanto, el 23.68% de los clientes cerraron un trato con una persona.
 ---
 
 ## Part 2: Data Lake Architecture

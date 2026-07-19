@@ -20,5 +20,7 @@ def clean_calls(raw: pl.LazyFrame) -> pl.LazyFrame:
         .filter(pl.col("is_soft_delete") == False)
         .with_columns(
             pl.col("timestamp_connection").dt.date().alias("fecha_llamada"),
+            (pl.col("timestamp_call_end") - pl.col("timestamp_connection"))
+            .dt.total_seconds().alias("duracion_segundos"),
         )
     )
